@@ -53,7 +53,7 @@ After running (whether it succeeds or fails), scan the PR comments (not the desc
 
 When collecting these suggestions:
 - Preserve comment order — surface them in the order they appear
-- **Exclude the last comment** if it contains Shift links — that comment describes the next Shift to run after this one is merged; set it aside and surface it in Step 10 instead
+- **Exclude the last comment** if it contains Shift links or "you're now running the latest version of Laravel" — set it aside and surface it in Step 10 instead
 - If any remaining (non-last) comments contain Shift suggestions, surface them to the user now:
 
 > "The PR suggests running additional Shifts: [list links in comment order]. Would you like to run any of these before continuing?"
@@ -104,5 +104,10 @@ Summarize:
 
 End with: "If you want to merge this PR, you can run `gh pr merge {PR_NUMBER} --merge --delete-branch` on your command line."
 
-If the last PR comment contained Shift links (set aside in Step 6), append:
-> "Once merged, the next suggested Shift to run is: [link(s)]"
+If the last PR comment contained Shift links (set aside in Step 6):
+- If the comment contains "you're now running the latest version of Laravel", append:
+  > "Congratulations, you're now running the latest version of Laravel!"
+  >
+  > "Once merged, consider running the [Laravel Fixer](https://laravelshift.com/laravel-fixer) to clean up any remaining issues."
+- Otherwise, append:
+  > "Once merged, the next suggested Shift to run is: [link(s)]"
