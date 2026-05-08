@@ -6,7 +6,7 @@ To use these commands, you may add the marketplace and install globally with Cla
 
 ```
 /plugin marketplace add jasonmccreary/ai-skills
-/plugin install laravel-shift@laravel-shift --scope user
+/plugin install shift@laravel-shift --scope user
 ```
 
 The `--scope user` flag installs the commands once for your entire system — no per-project setup needed.
