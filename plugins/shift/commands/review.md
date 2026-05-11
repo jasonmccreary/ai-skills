@@ -47,7 +47,12 @@ Analyze what Laravel Shift has done:
 
 ## Step 6: Composer Update
 
-Run `composer update`.
+Before running `composer update`, scan `composer.json` for any `dev-*` version constraints (e.g. `"dev-main"`, `"dev-master"`, `"dev-fix-something"`). For each one found:
+1. Look up the package on Packagist to check if a stable release exists: `composer show {package} --all`
+2. If a compatible stable version is available, update the constraint in `composer.json` to the appropriate semver range (e.g. `^1.2`) and track it as a swapped dependency for the summary in Step 10
+3. If no stable release exists, leave the `dev-*` constraint as-is
+
+Then run `composer update`.
 
 After running (whether it succeeds or fails), scan the PR comments (not the description) for any linked Shift suggestions — these are typically laravelshift.com URLs mentioned in comments recommending a follow-up Shift to run.
 
@@ -98,6 +103,7 @@ Do NOT commit any changes or push to the remote. Leave all changes as uncommitte
 Summarize:
 - What changes were made by Shift
 - What additional changes you made
+- Any `dev-*` dependencies that were swapped for a stable release (package name, old constraint → new constraint)
 - Any optional upgrades you skipped (and why they need user input)
 - Test results
 - Any remaining action items
