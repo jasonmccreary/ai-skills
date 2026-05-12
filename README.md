@@ -15,6 +15,6 @@ The `--scope user` flag installs the commands once for your entire system — no
 - `/shift-analyze` — analyze your project and determine the next Shift to run
 - `/shift-run` — trigger a Shift to run against your current repository
 - `/shift-review` — review and process the Shift PR for additional automation
-- `/shift-workbench` — run a [Shift Workbench](https://laravelshift.com/workbench) task to refactor your code
+- `/shift-refactor` — run a [Shift Workbench](https://laravelshift.com/workbench) task to refactor your code
 
 **Note:** These commands are being beta tested. As such, the `/shift-run` command is currently limited to subscribers of a [Shifty Plan](https://laravelshift.com/shifty-plans). Once tested, these commands will be made available to all Shift users.
