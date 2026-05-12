@@ -12,21 +12,43 @@ Review and process the pull request created by Laravel Shift #$ARGUMENTS.
 
 **Never revert or undo any changes made by Shift in this PR.** Shift's changes are intentional and authoritative. If you believe a change made by Shift is incorrect or needs to be different, do NOT make any changes — instead, flag it to the user with your findings and let them decide how to proceed.
 
-## Step 1: Find the PR
+## Step 1: Detect Platform
 
-Use `gh` CLI to find the PR for this Shift:
+Run:
+```bash
+git remote get-url origin
+```
+
+Parse the URL to detect the platform and extract `owner/repo` (handle both SSH and HTTPS formats, strip `.git`):
+- `github.com` → **GitHub**
+- `gitlab.com` or any other non-Bitbucket host → **GitLab**
+- `bitbucket.org` → **Bitbucket**
+
+**GitHub only**: Check that `gh` is installed (`gh --version`). If not, tell the user to install it from https://cli.github.com and stop.
+
+## Step 2: Find the PR and Fetch Details
+
+**GitHub:**
 ```bash
 gh pr list --head "shift-$ARGUMENTS" --json number,title,body,url
 ```
 
-If no PR is found, tell the user and stop. If multiple PRs are found, show the list and ask which one to use.
+If no PR is found, tell the user and stop. If multiple PRs are found, show the list and ask which one to use. Store the PR number for subsequent steps.
 
-Store the PR number for use in subsequent steps.
+Then fetch the description, comments, and diff:
+```bash
+gh pr view {PR_NUMBER} --comments
+gh pr diff {PR_NUMBER}
+```
 
-## Step 2: Fetch PR Details
+**GitLab and Bitbucket:**
 
-1. Get the PR description and comments: `gh pr view {PR_NUMBER} --comments`
-2. Get the full diff: `gh pr diff {PR_NUMBER}`
+The Shift branch is `shift-$ARGUMENTS`. Fetch it and generate the diff:
+```bash
+git fetch origin shift-$ARGUMENTS
+git diff $(git merge-base HEAD origin/shift-$ARGUMENTS)...origin/shift-$ARGUMENTS
+```
+
 
 ## Step 3: Check for Uncommitted Changes
 
@@ -42,10 +64,17 @@ Do NOT stash, reset, or otherwise modify their working directory. Only proceed i
 
 ## Step 4: Checkout the PR Branch
 
-Checkout the PR branch locally so all testing happens on the actual PR code:
+**GitHub:**
 ```bash
 gh pr checkout {PR_NUMBER}
 ```
+
+**GitLab and Bitbucket** — use native git:
+```bash
+git checkout shift-$ARGUMENTS
+```
+
+(`git fetch` was already run in Step 2.)
 
 ## Step 5: Understand the Changes
 
@@ -64,7 +93,12 @@ Before running `composer update`, scan `composer.json` for any `dev-*` version c
 
 Then run `composer update`.
 
-After running (whether it succeeds or fails), scan the PR comments (not the description) for any linked Shift suggestions — these are typically laravelshift.com URLs mentioned in comments recommending a follow-up Shift to run.
+After running (whether it succeeds or fails):
+
+**GitLab and Bitbucket only** — ask the user to paste the PR comments:
+> "Please paste any comments from the pull request here, or let me know if there are none."
+
+Then scan the pasted comments for any linked Shift suggestions — these are typically laravelshift.com URLs mentioned in comments recommending a follow-up Shift to run.
 
 When collecting these suggestions:
 - Preserve comment order — surface them in the order they appear
@@ -128,7 +162,15 @@ If the user confirms they want to merge:
    If the user declines, wait for them to confirm they've committed their changes before proceeding.
 3. Once the working directory is clean, check if the branch has unpushed commits: `git log origin/{BRANCH}..HEAD`
 4. If there are unpushed commits, push them: `git push`
-5. Then proceed with the merge: `gh pr merge {PR_NUMBER} --merge --delete-branch`
+5. Merge using the appropriate method for the platform:
+
+**GitHub:**
+```bash
+gh pr merge {PR_NUMBER} --merge --delete-branch
+```
+
+**GitLab and Bitbucket** — the branch has already been pushed. Tell the user:
+> "Please merge the pull request on {platform} and delete the source branch."
 
 If the last PR comment contained Shift links (set aside in Step 6):
 - If the comment contains "you're now running the latest version of Laravel", append:
