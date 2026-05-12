@@ -1,6 +1,6 @@
 # Laravel Shift
 
-Automate the full [Laravel Shift](https://laravelshift.com) upgrade workflow — from identifying what needs updating to merging the finished pull request.
+Automate the full [Shift](https://laravelshift.com) upgrade workflow — from identifying what needs updating to merging the finished pull request.
 
 ## What it does
 
@@ -16,7 +16,7 @@ Start with analysis and let each command guide you to the next:
 
 ```
 /shift:analyze
-/shift:run <code>
+/shift:run <sku>
 /shift:review <shift-number>
 ```
 
@@ -24,6 +24,6 @@ Or jump straight to a specific step if you already know what you need.
 
 ## Requirements
 
-- A [Shift API token](https://laravelshift.com/shifty-plans) (you will be prompted on first use)
 - A repository hosted on GitHub, GitLab, or Bitbucket
+- A [Shift API token](https://laravelshift.com/shifty-plans) (you will be prompted on first use)
 - [`gh`](https://cli.github.com) CLI installed (required for the review step on GitHub)
