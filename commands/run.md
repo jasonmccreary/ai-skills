@@ -99,9 +99,9 @@ Run a Shift against this repository via the Shift API. The Shift code is: $ARGUM
 
    - **202** — Success. Parse the response body and extract `shift_number`. Display this message exactly:
 
-     > Shift #{shift_number} has been queued. Most Shifts run within a few minutes. You may monitor its progress at: {repo_url}. Once the {pr_term} is open, you may use the `/shift:review {shift_number}` command to automate the review process.
+     > Shift #{shift_number} has been queued. Most Shifts run within a few minutes. You may monitor its progress at: {pr_url}. Once the {pr_term} is open, you may use the `/shift:review {shift_number}` command to automate the review process.
 
-     Where `{repo_url}` is the HTTPS URL to the repository from step 3 and `{pr_term}` is "pull request" for GitHub or "merge request" for GitLab.
+     Where `{pr_url}` is the HTTPS URL to the repository's pull requests page (`{repo_url}/pulls` for GitHub, `{repo_url}/-/merge_requests` for GitLab) and `{pr_term}` is "pull request" for GitHub or "merge request" for GitLab.
 
    - **400** — Bad code. Tell the user the code passed was not recognised by Shift and to double-check the code they provided.
 
