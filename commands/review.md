@@ -173,9 +173,14 @@ gh pr merge {PR_NUMBER} --merge --delete-branch
 > "Please merge the pull request on {platform} and delete the source branch."
 
 If the last PR comment contained Shift links (set aside in Step 6):
-- If the comment contains "you're now running the latest version of Laravel", append:
-  > "Congratulations, you're now running the latest version of Laravel!"
-  >
-  > "Once merged, consider running the [Laravel Fixer](https://laravelshift.com/laravel-fixer) to clean up any remaining issues."
+- If the comment contains "you're now running the latest version of Laravel":
+  - If there were Shift suggestions from non-last comments (surfaced in Step 6), append:
+    > "Congratulations, you're now running the latest version of Laravel!"
+    >
+    > "Once merged, the next suggested Shifts to run are: [link(s) from non-last comments, in comment order]."
+  - Otherwise, append:
+    > "Congratulations, you're now running the latest version of Laravel!"
+    >
+    > "Once merged, consider running the [Laravel Fixer](https://laravelshift.com/laravel-fixer) to clean up any remaining issues."
 - Otherwise, append:
   > "Once merged, the next suggested Shift to run is: [link(s)]"
