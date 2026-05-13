@@ -1,3 +1,8 @@
+---
+name: shift
+description: Automate the full Laravel upgrade process — from identifying what needs updating to merging the finished pull request
+---
+
 # Laravel Shift
 
 Automate the full [Shift](https://laravelshift.com) upgrade workflow — from identifying what needs updating to merging the finished pull request.
