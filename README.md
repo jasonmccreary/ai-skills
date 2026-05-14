@@ -2,14 +2,33 @@
 A set of AI skills and commands for managing the entire [Shift](https://laravelshift.com) process. Determine what Shift needs to be run, open a PR, and review it for additional automation all from your AI of choice.
 
 ## Installation
-To use these commands, you may add the marketplace and install globally with Claude Code:
+There are multiple ways to install these skills and commands.
+
+If you primarily use Claude Code, we recommend installing the plugin. Otherwise, you may install through _Laravel Boost_ or `npx`.
+
+### Claude Code
+Add the marketplace and install globally by running:
 
 ```
 /plugin marketplace add laravel-shift/shift-ai
 /plugin install shift@laravel-shift --scope user
 ```
 
-The `--scope user` flag installs the commands once for your entire system — no per-project setup needed.
+The `--scope user` flag installs the plugin once for your entire system — no per-project setup needed.
+
+### Laravel Boost
+You may also install via [Laravel Boost](https://laravel.com/ai/boost) by running:
+
+```sh
+php artisan boost:add-skill laravel/shift-ai --skill shift
+```
+
+### NPX Skills
+You may also install via [Skills](https://www.skills.sh/) by running:
+
+```sh
+npx skills add laravel-shift/shift-ai
+```
 
 ## Commands
 - `/shift:analyze` — analyze your project and determine the next Shift to run
