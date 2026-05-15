@@ -20,7 +20,7 @@ The `--scope user` flag installs the plugin once for your entire system — no p
 You may also install via [Laravel Boost](https://laravel.com/ai/boost) by running:
 
 ```sh
-php artisan boost:add-skill laravel/shift-ai --skill shift
+php artisan boost:add-skill laravel-shift/shift-ai --skill shift
 ```
 
 ### NPX Skills
