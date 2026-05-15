@@ -64,13 +64,13 @@ Run a Shift Workbench task against this repository. The task slug is: $ARGUMENTS
 
    Then lead with this recommendation before asking the user to choose:
 
-   > **First time?** Shift recommends starting with a curated set of safe, broadly applicable tasks: `adopt-anonymous-migrations`, `remove-down-migration`, `declare-strict-types`, `replace-global-facades`, `adopt-common-helpers`, `remove-redundant-table-name`, `convert-dates-property`, `use-latest-oldest`, `use-laravel-carbon`. Would you like to run the curated set, or choose a specific task?
+   > **First time?** Shift recommends starting with a curated set of safe, broadly applicable tasks: `replace-global-facades`, `adopt-common-helpers`, `remove-redundant-table-name`, `use-laravel-carbon`, `use-class-constant`, `adopt-short-arrays`, `streamline-order-methods`. Would you like to run the curated set, or choose a specific task?
 
    If the user accepts the curated set, use `shift-curated` as the task slug. Otherwise ask the user which single task they'd like to run.
 
 2. Validate that the provided slug exists in the table above. If an unrecognised slug is given, tell the user and stop.
 
-3. Check if `SHIFT_API_TOKEN` is set in the environment. If it's missing, ask the user to provide their Shift API token. Once provided, save it to `.claude/settings.local.json` under the `env` key so it's automatically available in all future sessions:
+3. Check if `SHIFT_API_TOKEN` is set in the environment. If it's missing, let the user know they may generate an API token at: https://laravelshift.com/account/api-token, then ask them to provide it. Once provided, ask whether they'd like to save it to `~/.claude/settings.json` (recommended — available across all projects) or `.claude/settings.local.json` (this project only). Save it under the `env` key of whichever file they choose:
    ```json
    {
      "env": {
@@ -78,7 +78,7 @@ Run a Shift Workbench task against this repository. The task slug is: $ARGUMENTS
      }
    }
    ```
-   If `.claude/settings.local.json` already exists, merge the key into the existing `env` object rather than overwriting the file.
+   If the target file already exists, merge the key into the existing `env` object rather than overwriting the file.
 
 4. Determine the remote and current branch by running:
    ```bash

@@ -33,7 +33,12 @@ Parse the URL to detect the platform and extract `owner/repo` (handle both SSH a
 gh pr list --head "shift-$ARGUMENTS" --json number,title,body,url
 ```
 
-If no PR is found, tell the user and stop. If multiple PRs are found, show the list and ask which one to use. Store the PR number for subsequent steps.
+If no PR is found, try the fallback branch name:
+```bash
+gh pr list --head "shift-build-$ARGUMENTS" --json number,title,body,url
+```
+
+If still no PR is found, tell the user and stop. If multiple PRs are found, show the list and ask which one to use. Store the PR number for subsequent steps.
 
 Then fetch the description, comments, and diff:
 ```bash
@@ -47,6 +52,12 @@ The Shift branch is `shift-$ARGUMENTS`. Fetch it and generate the diff:
 ```bash
 git fetch origin shift-$ARGUMENTS
 git diff $(git merge-base HEAD origin/shift-$ARGUMENTS)...origin/shift-$ARGUMENTS
+```
+
+If that fetch fails, fall back to `shift-build-$ARGUMENTS`:
+```bash
+git fetch origin shift-build-$ARGUMENTS
+git diff $(git merge-base HEAD origin/shift-build-$ARGUMENTS)...origin/shift-build-$ARGUMENTS
 ```
 
 
@@ -69,9 +80,9 @@ Do NOT stash, reset, or otherwise modify their working directory. Only proceed i
 gh pr checkout {PR_NUMBER}
 ```
 
-**GitLab and Bitbucket** — use native git:
+**GitLab and Bitbucket** — use native git, checking out whichever branch name succeeded in Step 2:
 ```bash
-git checkout shift-$ARGUMENTS
+git checkout {SHIFT_BRANCH}
 ```
 
 (`git fetch` was already run in Step 2.)
@@ -86,7 +97,21 @@ Analyze what Laravel Shift has done:
 
 ## Step 6: Composer Update
 
-Before running `composer update`, scan `composer.json` for any `dev-*` version constraints (e.g. `"dev-main"`, `"dev-master"`, `"dev-fix-something"`). For each one found:
+First, check whether `composer.json` was changed as part of this PR:
+
+**GitHub:**
+```bash
+gh pr diff {PR_NUMBER} --name-only | grep -q "^composer\.json$"
+```
+
+**GitLab and Bitbucket:**
+```bash
+git diff $(git merge-base HEAD origin/{SHIFT_BRANCH})...origin/{SHIFT_BRANCH} --name-only | grep -q "^composer\.json$"
+```
+
+If `composer.json` was **not** changed, skip the rest of this step entirely and proceed to Step 7.
+
+If `composer.json` **was** changed, scan it for any `dev-*` version constraints (e.g. `"dev-main"`, `"dev-master"`, `"dev-fix-something"`). For each one found:
 1. Look up the package on Packagist to check if a stable release exists: `composer show {package} --all`
 2. If a compatible stable version is available, update the constraint in `composer.json` to the appropriate semver range (e.g. `^1.2`) and track it as a swapped dependency for the summary in Step 10
 3. If no stable release exists, leave the `dev-*` constraint as-is
@@ -156,10 +181,12 @@ End with: "Would you like to merge this PR?"
 
 If the user confirms they want to merge:
 1. Check for any uncommitted local changes: `git status --porcelain`
-2. If there are uncommitted changes, offer to commit them:
-   > "You have uncommitted local changes. Would you like me to commit them for you with a summary?"
-   If the user agrees, stage all changes and commit using "Finalize upgrade" as the subject and the summary from Step 10 as the commit body.
-   If the user declines, wait for them to confirm they've committed their changes before proceeding.
+2. If there are uncommitted changes:
+   - Check if the only changed files match `composer.*` (i.e. `composer.json` and/or `composer.lock`). If so, stage and commit them automatically with the message `composer update` — do not prompt the user.
+   - Otherwise, offer to commit them:
+     > "You have uncommitted local changes. Would you like me to commit them for you with a summary?"
+     If the user agrees, stage all changes and commit using "Finalize upgrade" as the subject and the summary from Step 10 as the commit body.
+     If the user declines, wait for them to confirm they've committed their changes before proceeding.
 3. Once the working directory is clean, check if the branch has unpushed commits: `git log origin/{BRANCH}..HEAD`
 4. If there are unpushed commits, push them: `git push`
 5. Merge using the appropriate method for the platform:
